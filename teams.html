@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>اختيار الفريق</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #121212; color: white; text-align: center; }
+    h1 { margin: 20px 0; }
+    .teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding: 20px; }
+    .team { background: #1e1e1e; padding: 15px; border-radius: 10px; }
+    button { margin-top: 10px; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
+    .taken { background: gray !important; cursor: not-allowed; }
+    .available { background: #4CAF50; color: white; }
+  </style>
+</head>
+<body>
+  <h1>اختر فريقك</h1>
+  <div class="teams" id="teams"></div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+  <script>
+    // 🔑 مفاتيح Firebase ديالك
+    const firebaseConfig = {
+      apiKey: "AIzaSyDOpLT5g1uIADZNarhw9My4Gk1XnqMHnow",
+      authDomain: "team-picker-53404.firebaseapp.com",
+      projectId: "team-picker-53404",
+      storageBucket: "team-picker-53404.firebasestorage.app",
+      messagingSenderId: "982646433173",
+      appId: "1:982646433173:web:c3df72783cf808c213029c",
+      measurementId: "G-4DQ81FFGQD"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const teams = [
+      "REAL MADRID","ATLETICO MADRID","FC BARCELONA","VILLARREAL","SEVILLA",
+      "MAN UTD","LIVERPOOL","MANCITY","TOTTENHAM","NEWCASTLE UNITED",
+      "ARSENAL","CHELSEA","AC MILAN","INTER MILAN","ROMA",
+      "JUVENTUS","NAPOLI","BAYERN MUNCHEN","LEVERKUSEN","DORTMUND",
+      "PSG","MARSEILLE","MONACO","AL NASR","AL HILAL",
+      "SPORTING LISBON","BENFICA","AJAX","PSV","FLAMENGO",
+      "RIVER PLATE","NOTTINGHAM FOREST"
+    ];
+
+    const container = document.getElementById("teams");
+
+    async function renderTeams() {
+      container.innerHTML = "";
+      const snapshot = await db.collection("teams").get();
+      let takenTeams = snapshot.docs.map(doc => doc.id);
+
+      teams.forEach(team => {
+        const div = document.createElement("div");
+        div.classList.add("team");
+        div.innerHTML = `<strong>${team}</strong><br>`;
+        const btn = document.createElement("button");
+
+        if (takenTeams.includes(team)) {
+          btn.textContent = "تم الحجز";
+          btn.classList.add("taken");
+          btn.disabled = true;
+        } else {
+          btn.textContent = "اختيار";
+          btn.classList.add("available");
+          btn.onclick = () => chooseTeam(team);
+        }
+
+        div.appendChild(btn);
+        container.appendChild(div);
+      });
+    }
+
+    async function chooseTeam(team) {
+      const snapshot = await db.collection("teams").doc(team).get();
+      if (snapshot.exists) {
+        alert("عذراً، هذا الفريق تم حجزه بالفعل!");
+        renderTeams();
+      } else {
+        await db.collection("teams").doc(team).set({ chosenAt: new Date().toISOString() });
+        alert("لقد اخترت: " + team);
+        renderTeams();
+      }
+    }
+
+    renderTeams();
+  </script>
+</body>
+</html>
