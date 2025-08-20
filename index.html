@@ -381,14 +381,15 @@
     </div>
 
     <script>
-        // بيانات الفرق
+        // بيانات الفرق - 32 فريقاً كما طلبت
         const teams = [
-            "SEVILLA", "VILLARREAL", "FC BARCELONA", "ATLETICO MADRID", "REAL MADRID",
-            "NEWCASTLE UNITED", "TOTTENHAM", "MANCHESTER CITY", "LIVERPOOL", "MANCHESTER UNITED",
-            "ROMA", "INTER MILAN", "AC MILAN", "CHELSEA", "ARSENAL",
-            "DORTMUND", "LEVERKUSEN", "BAYERN MUNICH", "NAPOLI", "JUVENTUS",
-            "AL HILAL", "AL NASR", "MONACO", "MARSEILLE", "PSG",
-            "FLAMENGO", "PSV", "AJAX", "BENFICA", "SPORTING LISBON"
+            "REAL MADRID", "ATLETICO MADRID", "FC BARCELONA", "VILLARREAL", "SEVILLA",
+            "MAN UTD", "LIVERPOOL", "MANCITY", "TOTTENHAM", "NEWCASTLE UNITED",
+            "ARSENAL", "CHELSEA", "AC MILAN", "INTER MILAN", "ROMA",
+            "JUVENTUS", "NAPOLI", "BAYERN MUNCHEN", "LEVERKUSEN", "DORTMUND",
+            "PSG", "MARSEILLE", "MONACO", "AL NASR", "AL HILAL",
+            "SPORTING LISBON", "BENFICA", "AJAX", "PSV", "FLAMENGO",
+            "RIVER PLATE", "NOTTINGHAM FOREST"
         ];
         
         // عناصر DOM
@@ -507,7 +508,7 @@
         
         // تحديث الإحصائيات
         function updateStats() {
-            remainingCount.textContent = 30 - selections.length;
+            remainingCount.textContent = 32 - selections.length;
             selectedCount.textContent = selections.length;
         }
         
