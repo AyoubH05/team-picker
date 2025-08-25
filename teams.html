@@ -581,9 +581,10 @@
                 "RIVER PLATE", "NOTTINGHAM FOREST"
             ];
             
-            let availableTeams = [...teams];
-            let selectedTeams = [];
-            let allSelections = [];
+            // تحميل البيانات من localStorage
+            let availableTeams = JSON.parse(localStorage.getItem('availableTeams')) || [...teams];
+            let selectedTeams = JSON.parse(localStorage.getItem('selectedTeams')) || [];
+            let allSelections = JSON.parse(localStorage.getItem('allSelections')) || [];
             let selectedTeamName = null;
             
             // عرض الفرق في الواجهة
@@ -596,24 +597,40 @@
                     teamCard.id = `team-${team.replace(/\s+/g, '-')}`;
                     teamCard.dataset.team = team;
                     
-                    // إضافة حدث النقر على الفريق
-                    teamCard.addEventListener('click', function() {
-                        if (this.classList.contains('selected')) return;
+                    // التحقق إذا كان الفريق محجوزاً
+                    const selection = allSelections.find(s => s.team === team);
+                    if (selection) {
+                        teamCard.classList.add('selected');
                         
-                        // إلغاء اختيار أي فريق آخر
-                        document.querySelectorAll('.team-card').forEach(card => {
-                            card.classList.remove('selected');
+                        // إضافة اسم المختار
+                        const selectorElement = document.createElement('div');
+                        selectorElement.className = 'selector-name';
+                        selectorElement.textContent = `اختاره: ${selection.userName}`;
+                        teamCard.appendChild(selectorElement);
+                    }
+                    
+                    // إضافة حدث النقر على الفريق (فقط إذا كان متاحاً)
+                    if (!selection) {
+                        teamCard.addEventListener('click', function() {
+                            if (this.classList.contains('selected')) return;
+                            
+                            // إلغاء اختيار أي فريق آخر
+                            document.querySelectorAll('.team-card').forEach(card => {
+                                if (!card.querySelector('.selector-name')) {
+                                    card.classList.remove('selected');
+                                }
+                            });
+                            
+                            // اختيار الفريق الحالي
+                            this.classList.add('selected');
+                            selectedTeamName = this.dataset.team;
+                            
+                            // تمكين زر التأكيد إذا تم إدخال اسم ورقم الهاتف
+                            if (userNameInput.value.trim() && userPhoneInput.value.trim()) {
+                                confirmButton.disabled = false;
+                            }
                         });
-                        
-                        // اختيار الفريق الحالي
-                        this.classList.add('selected');
-                        selectedTeamName = this.dataset.team;
-                        
-                        // تمكين زر التأكيد إذا تم إدخال اسم ورقم الهاتف
-                        if (userNameInput.value.trim() && userPhoneInput.value.trim()) {
-                            confirmButton.disabled = false;
-                        }
-                    });
+                    }
                     
                     teamsContainer.appendChild(teamCard);
                 });
@@ -676,6 +693,10 @@
                 
                 // إزالة اختيار الفريق
                 selectedTeamName = null;
+                
+                // مسح حقول الإدخال
+                userNameInput.value = '';
+                userPhoneInput.value = '';
             }
             
             // إضافة اختيار إلى السجل
@@ -683,12 +704,19 @@
                 const now = new Date();
                 const timeString = now.toLocaleTimeString('ar-SA');
                 
-                allSelections.push({
+                const newSelection = {
                     userName: userName,
                     userPhone: userPhone,
                     team: team,
                     time: timeString
-                });
+                };
+                
+                allSelections.push(newSelection);
+                
+                // حفظ البيانات في localStorage
+                localStorage.setItem('allSelections', JSON.stringify(allSelections));
+                localStorage.setItem('availableTeams', JSON.stringify(availableTeams));
+                localStorage.setItem('selectedTeams', JSON.stringify(selectedTeams));
                 
                 updateSelectionsList();
             }
@@ -703,6 +731,11 @@
                 selectedTeams = [];
                 allSelections = [];
                 selectedTeamName = null;
+                
+                // مسح localStorage
+                localStorage.removeItem('availableTeams');
+                localStorage.removeItem('selectedTeams');
+                localStorage.removeItem('allSelections');
                 
                 // إعادة تعيين واجهة المستخدم
                 const allCards = document.querySelectorAll('.team-card');
@@ -766,6 +799,12 @@
                 
                 if (!selectedTeamName) {
                     alert('يرجى اختيار فريق أولاً');
+                    return;
+                }
+                
+                // التحقق إذا كان الفريق متاحاً
+                if (!availableTeams.includes(selectedTeamName)) {
+                    alert('هذا الفريق محجوز بالفعل، يرجى اختيار فريق آخر');
                     return;
                 }
                 
