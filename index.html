@@ -39,8 +39,8 @@
         }
         
         h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
+            font-size: 3.5rem;
+            margin-bottom: 40px;
             color: #00ff00;
             text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
             background: linear-gradient(45deg, #00ff00, #00cc88);
@@ -48,24 +48,17 @@
             -webkit-text-fill-color: transparent;
         }
         
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.6;
-            color: #e0e0e0;
-        }
-        
         .buttons {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 40px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 16px 35px;
-            font-size: 1.2rem;
+            padding: 18px 40px;
+            font-size: 1.3rem;
             border-radius: 50px;
             text-decoration: none;
             display: flex;
@@ -99,30 +92,18 @@
             box-shadow: 0 0 25px rgba(255, 51, 153, 0.6);
         }
         
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 50px;
-        }
-        
-        .feature {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 25px;
+        .admin-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
-            border: 1px solid #00ff00;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            border: 1px solid #ff3399;
+            display: none;
         }
         
-        .feature i {
-            font-size: 2.5rem;
+        .admin-panel h3 {
             color: #ff3399;
             margin-bottom: 15px;
-        }
-        
-        .feature h3 {
-            color: #00ff00;
-            margin-bottom: 10px;
         }
         
         footer {
@@ -133,7 +114,7 @@
         
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.2rem;
+                font-size: 2.5rem;
             }
             
             .buttons {
@@ -145,41 +126,35 @@
                 width: 100%;
                 max-width: 280px;
                 justify-content: center;
+                padding: 16px 30px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>نظام إدارة اختيار الفرق</h1>
-        <p>مرحبًا بك في نظام إدارة اختيار الفرق للبطولة. يمكنك من خلال هذا النظام اختيار فريقك المفضل ومتابعة اختيارات الآخرين.</p>
+        <h1>اختيار الفريق</h1>
         
         <div class="buttons">
             <a href="teams.html" class="btn btn-primary">
                 <i class="fas fa-users"></i>
                 اختيار الفريق
             </a>
-            <a href="admin.html" class="btn btn-secondary">
+            <!-- زر لوحة التحكم مخفي عن المشاركين العاديين -->
+            <a href="admin.html" class="btn btn-secondary" id="adminBtn" style="display: none;">
                 <i class="fas fa-cog"></i>
                 لوحة التحكم
             </a>
         </div>
         
-        <div class="features">
-            <div class="feature">
-                <i class="fas fa-check-circle"></i>
-                <h3>اختيار سهل</h3>
-                <p>اختر فريقك بسهولة من بين 32 فريقًا معروفًا</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-list"></i>
-                <h3>متابعة مباشرة</h3>
-                <p>تابع اختيارات المشاركين الآخرين في الوقت الحقيقي</p>
-            </div>
-            <div class="feature">
-                <i class="fas fa-mobile-alt"></i>
-                <h3>متجاوب</h3>
-                <p>يتوافق النظام مع جميع أحجام الشاشات والأجهزة</p>
+        <!-- لوحة التحكم للمنظم (مخفية) -->
+        <div class="admin-panel" id="adminPanel">
+            <h3>لوحة تحكم المنظم</h3>
+            <div class="buttons">
+                <a href="admin.html" class="btn btn-secondary">
+                    <i class="fas fa-cog"></i>
+                    لوحة التحكم الكاملة
+                </a>
             </div>
         </div>
     </div>
@@ -187,5 +162,19 @@
     <footer>
         <p>نظام إدارة البطولة © 2023 | جميع الحقوق محفوظة</p>
     </footer>
+
+    <script>
+        // التحقق من وجود معلمة admin في الرابط
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isAdmin = urlParams.has('admin');
+            
+            if (isAdmin) {
+                // إظهار زر لوحة التحكم ولوحة المنظم
+                document.getElementById('adminBtn').style.display = 'flex';
+                document.getElementById('adminPanel').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
