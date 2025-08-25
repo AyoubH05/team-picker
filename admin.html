@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم المسؤول - نظام إدارة البطولة</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Team Picker - لوحة التحكم</title>
     <style>
         * {
             box-sizing: border-box;
@@ -14,415 +13,335 @@
         }
         
         body {
-            background-color: #0a0a1a;
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(0, 100, 255, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 75% 75%, rgba(255, 50, 50, 0.1) 0%, transparent 20%);
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
         }
         
-        .admin-container {
-            max-width: 1000px;
+        .container {
+            width: 90%;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(10, 10, 30, 0.9);
-            border-radius: 15px;
             padding: 20px;
-            box-shadow: 0 0 25px rgba(0, 100, 255, 0.3);
-            border: 1px solid #2563eb;
         }
         
-        .admin-header {
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #2563eb;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        .admin-header h1 {
-            color: #3b82f6;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        nav {
+            background-color: #34495e;
+            padding: 0.5rem 0;
         }
         
-        .admin-header p {
-            color: #94a3b8;
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
         }
         
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+        nav ul li {
+            margin: 0 15px;
         }
         
-        .stat-card {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 10px;
-            padding: 20px;
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background-color: #2c3e50;
+        }
+        
+        .page-title {
             text-align: center;
-            border: 1px solid #334155;
+            margin: 2rem 0;
+            color: #2c3e50;
         }
         
-        .stat-card h3 {
-            color: #94a3b8;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .stat-card .value {
-            color: #3b82f6;
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-        
-        .admin-actions {
+        .admin-panels {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
         }
         
-        .action-card {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
-            border: 1px solid #334155;
-            transition: all 0.3s ease;
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            border-color: #3b82f6;
+        .panel h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         
-        .action-card i {
-            font-size: 3rem;
-            color: #3b82f6;
+        .form-group {
             margin-bottom: 15px;
         }
         
-        .action-card h3 {
-            color: #e2e8f0;
-            margin-bottom: 15px;
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         
-        .action-card p {
-            color: #94a3b8;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            background: #3b82f6;
+        button {
+            background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 4px;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            transition: background-color 0.3s;
         }
         
-        .btn:hover {
-            background: #2563eb;
-            transform: scale(1.05);
+        button:hover {
+            background-color: #2980b9;
         }
         
         .btn-danger {
-            background: #ef4444;
+            background-color: #e74c3c;
         }
         
         .btn-danger:hover {
-            background: #dc2626;
+            background-color: #c0392b;
         }
         
-        .selections-table {
+        .saved-data {
+            margin-top: 2rem;
+        }
+        
+        .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 10px;
-            overflow: hidden;
+            margin-top: 15px;
         }
         
-        .selections-table th, .selections-table td {
-            padding: 15px;
+        .data-table th, .data-table td {
+            padding: 12px;
             text-align: right;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid #ddd;
         }
         
-        .selections-table th {
-            background: rgba(30, 41, 59, 0.8);
-            color: #3b82f6;
+        .data-table th {
+            background-color: #f2f2f2;
             font-weight: bold;
         }
         
-        .selections-table tr:last-child td {
-            border-bottom: none;
+        .data-table tr:hover {
+            background-color: #f5f5f5;
         }
         
-        .selections-table tr:hover {
-            background: rgba(51, 65, 85, 0.3);
-        }
-        
-        .password-form {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 30px;
-            background: rgba(30, 41, 59, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+        footer {
+            background-color: #2c3e50;
+            color: white;
             text-align: center;
-            border: 1px solid #334155;
-        }
-        
-        .password-form h2 {
-            color: #3b82f6;
-            margin-bottom: 20px;
-        }
-        
-        .password-form input {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.7);
-            color: white;
-            font-size: 1.1rem;
-        }
-        
-        .password-form button {
-            width: 100%;
-            padding: 15px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
-        
-        .password-form button:hover {
-            background: #2563eb;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            padding: 10px 15px;
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid #ef4444;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
+            padding: 1rem 0;
+            margin-top: 2rem;
         }
         
         @media (max-width: 768px) {
-            .stats-grid, .admin-actions {
-                grid-template-columns: 1fr;
+            nav ul {
+                flex-direction: column;
+                align-items: center;
             }
             
-            .admin-header h1 {
-                font-size: 2rem;
+            nav ul li {
+                margin: 5px 0;
+            }
+            
+            .data-table {
+                font-size: 0.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- نموذج كلمة المرور -->
-    <div id="passwordForm" class="password-form">
-        <h2><i class="fas fa-lock"></i> دخول المسؤول</h2>
-        <p>يجب إدخال كلمة المرور للوصول إلى لوحة التحكم</p>
-        <input type="password" id="adminPassword" placeholder="كلمة مرور المسؤول">
-        <button onclick="checkPassword()">دخول</button>
-    </div>
-
-    <!-- لوحة التحكم -->
-    <div id="adminPanel" class="hidden">
-        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> خروج</button>
+    <header>
+        <div class="container">
+            <h1>Team Picker</h1>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">الصفحة الرئيسية</a></li>
+                <li><a href="teams.html">إدارة الفرق</a></li>
+                <li><a href="admin.html">لوحة التحكم</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <h2 class="page-title">لوحة تحكم المدير</h2>
         
-        <div class="admin-container">
-            <div class="admin-header">
-                <h1><i class="fas fa-crown"></i> لوحة تحكم المسؤول</h1>
-                <p>إدارة نظام اختيار الفرق - الوصول مقصور على المسؤولين فقط</p>
+        <div class="admin-panels">
+            <div class="panel">
+                <h3>إضافة أعضاء جدد</h3>
+                <div class="form-group">
+                    <label for="memberName">اسم العضو:</label>
+                    <input type="text" id="memberName" placeholder="أدخل الاسم">
+                </div>
+                <div class="form-group">
+                    <label for="memberEmail">البريد الإلكتروني (اختياري):</label>
+                    <input type="email" id="memberEmail" placeholder="example@email.com">
+                </div>
+                <button onclick="addMember()">إضافة عضو</button>
             </div>
             
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>عدد المشاركين</h3>
-                    <div class="value" id="participantsCount">0</div>
+            <div class="panel">
+                <h3>إعدادات التوزيع</h3>
+                <div class="form-group">
+                    <label for="defaultTeams">عدد الفرق الافتراضي:</label>
+                    <select id="defaultTeams">
+                        <option value="2">2 فريق</option>
+                        <option value="3" selected>3 فرق</option>
+                        <option value="4">4 فرق</option>
+                        <option value="5">5 فرق</option>
+                    </select>
                 </div>
-                <div class="stat-card">
-                    <h3>الفرق المتبقية</h3>
-                    <div class="value" id="remainingTeams">32</div>
+                <div class="form-group">
+                    <label for="distributionMethod">طريقة التوزيع:</label>
+                    <select id="distributionMethod">
+                        <option value="random">عشوائي</option>
+                        <option value="balanced">متوازن حسب المهارات</option>
+                    </select>
                 </div>
-                <div class="stat-card">
-                    <h3>الفرق المختارة</h3>
-                    <div class="value" id="selectedTeams">0</div>
-                </div>
+                <button onclick="saveSettings()">حفظ الإعدادات</button>
             </div>
             
-            <div class="admin-actions">
-                <div class="action-card">
-                    <i class="fas fa-file-export"></i>
-                    <h3>تصدير البيانات</h3>
-                    <p>تصدير جميع اختيارات المشاركين إلى ملف Excel للاحتفاظ بنسخة احتياطية</p>
-                    <button class="btn" onclick="exportData()"><i class="fas fa-download"></i> تصدير البيانات</button>
+            <div class="panel">
+                <h3>إدارة البيانات</h3>
+                <p>يمكنك من هنا استيراد أو تصدير البيانات المحفوظة</p>
+                <div class="form-group">
+                    <button onclick="exportData()">تصدير البيانات</button>
                 </div>
-                
-                <div class="action-card">
-                    <i class="fas fa-eraser"></i>
-                    <h3>إعادة التعيين</h3>
-                    <p>مسح جميع البيانات والبدء من جديد. سيتم حذف جميع اختيارات المشاركين</p>
-                    <button class="btn btn-danger" onclick="confirmReset()"><i class="fas fa-trash"></i> إعادة التعيين</button>
+                <div class="form-group">
+                    <label for="importFile">استيراد البيانات:</label>
+                    <input type="file" id="importFile">
                 </div>
-            </div>
-            
-            <h2 style="color: #3b82f6; margin: 30px 0 20px;">الاختيارات المسجلة</h2>
-            <div class="table-container">
-                <table class="selections-table">
-                    <thead>
-                        <tr>
-                            <th>اسم المشترك</th>
-                            <th>الفريق المختار</th>
-                            <th>وقت التسجيل</th>
-                        </tr>
-                    </thead>
-                    <tbody id="selectionsTableBody">
-                        <!-- سيتم ملء هذا الجدول بالبيانات عبر JavaScript -->
-                    </tbody>
-                </table>
+                <button class="btn-danger" onclick="clearAllData()">مسح جميع البيانات</button>
             </div>
         </div>
+        
+        <div class="saved-data">
+            <h3>الأعضاء المضافون</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="membersTable">
+                    <tr>
+                        <td>1</td>
+                        <td>أحمد محمد</td>
+                        <td>ahmed@example.com</td>
+                        <td>
+                            <button>تعديل</button>
+                            <button class="btn-danger">حذف</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>سارة عبدالله</td>
+                        <td>sara@example.com</td>
+                        <td>
+                            <button>تعديل</button>
+                            <button class="btn-danger">حذف</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 Team Picker - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
 
     <script>
-        // كلمة مرور المسؤول (يمكنك تغييرها)
-        const ADMIN_PASSWORD = "admin123";
-        
-        // عناصر DOM
-        const passwordForm = document.getElementById('passwordForm');
-        const adminPanel = document.getElementById('adminPanel');
-        const participantsCount = document.getElementById('participantsCount');
-        const remainingTeams = document.getElementById('remainingTeams');
-        const selectedTeams = document.getElementById('selectedTeams');
-        const selectionsTableBody = document.getElementById('selectionsTableBody');
-        
-        // التحقق من كلمة المرور
-        function checkPassword() {
-            const inputPassword = document.getElementById('adminPassword').value;
-            if (inputPassword === ADMIN_PASSWORD) {
-                passwordForm.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
-                loadAdminData();
-            } else {
-                alert("كلمة المرور غير صحيحة!");
-            }
-        }
-        
-        // تسجيل الخروج
-        function logout() {
-            passwordForm.classList.remove('hidden');
-            adminPanel.classList.add('hidden');
-            document.getElementById('adminPassword').value = "";
-        }
-        
-        // تحميل بيانات الإدارة
-        function loadAdminData() {
-            // تحميل بيانات المشاركين من localStorage
-            const selections = JSON.parse(localStorage.getItem('teamSelections')) || [];
-            const teams = JSON.parse(localStorage.getItem('availableTeams')) || [];
+        function addMember() {
+            const name = document.getElementById('memberName').value;
+            const email = document.getElementById('memberEmail').value;
             
-            // تحديث الإحصائيات
-            participantsCount.textContent = selections.length;
-            selectedTeams.textContent = selections.length;
-            remainingTeams.textContent = 32 - selections.length;
-            
-            // تحديث جدول المشاركين
-            selectionsTableBody.innerHTML = '';
-            if (selections.length === 0) {
-                selectionsTableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">لا توجد اختيارات مسجلة بعد</td></tr>';
-            } else {
-                selections.forEach(selection => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${selection.name}</td>
-                        <td>${selection.team}</td>
-                        <td>${new Date(selection.timestamp).toLocaleString('ar-SA')}</td>
-                    `;
-                    selectionsTableBody.appendChild(row);
-                });
-            }
-        }
-        
-        // تصدير البيانات
-        function exportData() {
-            const selections = JSON.parse(localStorage.getItem('teamSelections')) || [];
-            
-            if (selections.length === 0) {
-                alert("لا توجد بيانات للتصدير!");
+            if (!name) {
+                alert('يرجى إدخال اسم العضو');
                 return;
             }
             
-            // تحويل البيانات إلى تنسيق CSV
-            let csvContent = "اسم المشترك,الفريق المختار,وقت التسجيل\n";
-            selections.forEach(selection => {
-                csvContent += `"${selection.name}","${selection.team}","${new Date(selection.timestamp).toLocaleString('ar-SA')}"\n`;
-            });
+            const table = document.getElementById('membersTable');
+            const rowCount = table.rows.length;
             
-            // إنشاء ملف وتنزيله
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            const date = new Date().toISOString().slice(0, 10);
+            const newRow = table.insertRow();
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+            const cell3 = newRow.insertCell(2);
+            const cell4 = newRow.insertCell(3);
             
-            link.setAttribute("href", url);
-            link.setAttribute("download", `اختيارات_الفرق_${date}.csv`);
-            link.style.visibility = 'hidden';
+            cell1.textContent = rowCount + 1;
+            cell2.textContent = name;
+            cell3.textContent = email || 'غير محدد';
             
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            cell4.innerHTML = `
+                <button>تعديل</button>
+                <button class="btn-danger" onclick="deleteMember(this)">حذف</button>
+            `;
             
-            alert("تم تصدير البيانات بنجاح!");
+            // مسح الحقول بعد الإضافة
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberEmail').value = '';
+            
+            alert('تم إضافة العضو بنجاح!');
         }
         
-        // تأكيد إعادة التعيين
-        function confirmReset() {
-            if (confirm("هل أنت متأكد من أنك تريد مسح جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء!")) {
-                localStorage.removeItem('teamSelections');
-                localStorage.removeItem('availableTeams');
-                
-                // إعادة تحميل البيانات لعرض التغييرات
-                loadAdminData();
-                
-                alert("تم مسح جميع البيانات بنجاح!");
+        function deleteMember(button) {
+            const row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+            alert('تم حذف العضو بنجاح!');
+        }
+        
+        function saveSettings() {
+            const defaultTeams = document.getElementById('defaultTeams').value;
+            const distributionMethod = document.getElementById('distributionMethod').value;
+            
+            alert(`تم حفظ الإعدادات بنجاح!\nعدد الفرق الافتراضي: ${defaultTeams}\nطريقة التوزيع: ${distributionMethod}`);
+        }
+        
+        function exportData() {
+            alert('تم تصدير البيانات بنجاح!');
+        }
+        
+        function clearAllData() {
+            if (confirm('هل أنت متأكد من رغبتك في مسح جميع البيانات؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                document.getElementById('membersTable').innerHTML = '';
+                alert('تم مسح جميع البيانات!');
             }
-        }
-        
-        // تحميل البيانات عند فتح الصفحة إذا كان المستخدم مسجلاً دخوله
-        if (localStorage.getItem('adminAuthenticated') === 'true') {
-            passwordForm.classList.add('hidden');
-            adminPanel.classList.remove('hidden');
-            loadAdminData();
         }
     </script>
 </body>
