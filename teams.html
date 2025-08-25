@@ -3,13 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اختيار الفريق - نظام إدارة البطولة</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- إضافة Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+    <title>Team Picker - إدارة الفرق</title>
     <style>
         * {
             box-sizing: border-box;
@@ -19,701 +13,325 @@
         }
         
         body {
-            background-color: #0a0a1a;
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(0, 100, 255, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 75% 75%, rgba(255, 50, 50, 0.1) 0%, transparent 20%);
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
         }
         
         .container {
+            width: 90%;
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
         
         header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
             text-align: center;
-            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
-        header h1 {
-            color: #3b82f6;
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
+        nav {
+            background-color: #34495e;
+            padding: 0.5rem 0;
         }
         
-        .stats {
+        nav ul {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-bottom: 20px;
+            list-style: none;
         }
         
-        .stat-box {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 15px 25px;
-            text-align: center;
-            min-width: 150px;
+        nav ul li {
+            margin: 0 15px;
         }
         
-        .stat-box h3 {
-            color: #94a3b8;
-            margin-bottom: 5px;
-            font-size: 1rem;
-        }
-        
-        .stat-box .value {
-            color: #3b82f6;
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        
-        .instructions {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid #334155;
-        }
-        
-        .instructions h2 {
-            color: #3b82f6;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .instructions ol {
-            padding-right: 20px;
-            line-height: 1.8;
-        }
-        
-        .instructions li {
-            margin-bottom: 10px;
-        }
-        
-        .participant-form {
-            background: rgba(30, 41, 59, 0.7);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 1px solid #334155;
-            text-align: center;
-        }
-        
-        .participant-form h2 {
-            color: #3b82f6;
-            margin-bottom: 20px;
-        }
-        
-        .input-group {
-            margin-bottom: 20px;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #e2e8f0;
-            font-weight: bold;
-        }
-        
-        .input-group input {
-            width: 100%;
-            max-width: 400px;
-            padding: 15px;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.7);
+        nav ul li a {
             color: white;
-            font-size: 1.1rem;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background-color: #2c3e50;
+        }
+        
+        .page-title {
             text-align: center;
-            margin: 0 auto;
+            margin: 2rem 0;
+            color: #2c3e50;
+        }
+        
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
             display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         
-        .phone-note {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            margin-top: 5px;
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
         
-        .teams-grid {
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .teams-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
         
         .team-card {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid #334155;
-            border-radius: 10px;
+            background: white;
             padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .team-card:hover {
-            transform: translateY(-5px);
-            border-color: #3b82f6;
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        }
-        
-        .team-card.selected {
-            background: rgba(34, 197, 94, 0.2);
-            border-color: #22c55e;
-        }
-        
-        .team-card.unavailable {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: #ef4444;
-            cursor: not-allowed;
-            opacity: 0.7;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .team-card h3 {
-            color: #e2e8f0;
-            margin-bottom: 10px;
-            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
         
-        .save-section {
-            text-align: center;
-            margin-bottom: 40px;
+        .member-list {
+            list-style: none;
         }
         
-        .btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .member-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
         }
         
-        .btn:hover {
-            background: #2563eb;
-            transform: scale(1.05);
-        }
-        
-        .btn:disabled {
-            background: #64748b;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .selections-table {
-            width: 100%;
-            border-collapse: collapse;
+        .actions {
             margin-top: 20px;
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .selections-table th, .selections-table td {
-            padding: 15px;
-            text-align: right;
-            border-bottom: 1px solid #334155;
-        }
-        
-        .selections-table th {
-            background: rgba(30, 41, 59, 0.8);
-            color: #3b82f6;
-            font-weight: bold;
-        }
-        
-        .selections-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .selections-table tr:hover {
-            background: rgba(51, 65, 85, 0.3);
-        }
-        
-        .edit-btn {
-            padding: 8px 15px;
-            background: #f59e0b;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .edit-btn:hover {
-            background: #d97706;
-        }
-        
-        /* نافذة التعديل */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-            border: 2px solid #3b82f6;
-            position: relative;
-        }
-        
-        .close {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 28px;
-            cursor: pointer;
-            color: #94a3b8;
-        }
-        
-        .close:hover {
-            color: white;
-        }
-        
-        .modal-actions {
             display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
+            justify-content: space-between;
         }
         
         .btn-secondary {
-            background: #64748b;
+            background-color: #7f8c8d;
         }
         
         .btn-secondary:hover {
-            background: #475569;
+            background-color: #95a5a6;
         }
         
-        .reminder {
-            margin-top: 40px;
-            background: linear-gradient(135deg, #1e40af, #3730a3);
-            border: 2px solid #4f46e5;
-        }
-        
-        .reminder-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-        
-        .reminder-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
+        footer {
+            background-color: #2c3e50;
+            color: white;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .reminder-item i {
-            font-size: 2.5rem;
-            color: #818cf8;
-            margin-bottom: 15px;
-        }
-        
-        .reminder-item h3 {
-            color: #e0e7ff;
-            margin-bottom: 10px;
-        }
-        
-        .reminder-item p {
-            color: #c7d2fe;
-            font-size: 0.9rem;
-        }
-        
-        .contact-info {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .contact-info p {
-            color: #93c5fd;
-            margin: 0;
-        }
-        
-        .contact-info strong {
-            color: #60a5fa;
+            padding: 1rem 0;
+            margin-top: 2rem;
         }
         
         @media (max-width: 768px) {
-            .stats {
+            nav ul {
                 flex-direction: column;
                 align-items: center;
             }
             
-            .teams-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            nav ul li {
+                margin: 5px 0;
             }
             
-            .modal-actions {
+            .actions {
                 flex-direction: column;
+                gap: 10px;
             }
             
-            .reminder-content {
-                grid-template-columns: 1fr;
+            .actions button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="container">
+            <h1>Team Picker</h1>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">الصفحة الرئيسية</a></li>
+                <li><a href="teams.html">إدارة الفرق</a></li>
+                <li><a href="admin.html">لوحة التحكم</a></li>
+            </ul>
+        </div>
+    </nav>
+    
     <div class="container">
-        <header>
-            <h1>اختر فريقتك</h1>
-            <div class="stats">
-                <div class="stat-box">
-                    <h3>المتبقي</h3>
-                    <div class="value" id="remainingCount">32</div>
-                </div>
-                <div class="stat-box">
-                    <h3>تم الاختيار</h3>
-                    <div class="value" id="selectedCount">0</div>
-                </div>
-            </div>
-        </header>
+        <h2 class="page-title">إنشاء وتوزيع الفرق</h2>
         
-        <section class="instructions">
-            <h2>كيفية الاستخدام:</h2>
-            <ol>
-                <li>أدخل اسمك في الحقل المخصص (يمكن إضافة رقم الهاتف بجانب الاسم للتمييز)</li>
-                <li>اختر الفريق الذي تريد من قائمة الفرق المتاحة</li>
-                <li>اضغط على "احفظ الاختيار" لتأكيد</li>
-                <li>سيظهر اسمك والفريق المختار في الجدول أدناه</li>
-                <li>يمكن للجميع رؤية جميع الاختيارات في الجدول</li>
-            </ol>
-        </section>
-        
-        <section class="participant-form">
-            <h2>بيانات المشترك:</h2>
-            <div class="input-group">
-                <label for="participantName">الاسم الكامل (مع رقم الهاتف إذا needed)</label>
-                <input type="text" id="participantName" placeholder="مثال: محمد أحمد - 0512345678">
-                <div class="phone-note">يمكنك إضافة رقم الهاتف بجانب الاسم للتمييز بين الأسماء المتشابهة</div>
-            </div>
-        </section>
-        
-        <div class="teams-grid" id="teamsContainer">
-            <div class="loading">جاري تحميل الفرق...</div>
-        </div>
-        
-        <div class="save-section">
-            <button id="saveSelection" class="btn" disabled>احفظ الاختيار</button>
-        </div>
-        
-        <h2 style="color: #3b82f6; text-align: center; margin: 30px 0 20px;">قائمة الاختيارات:</h2>
-        <div class="table-container">
-            <table class="selections-table">
-                <thead>
-                    <tr>
-                        <th>اسم المشترك</th>
-                        <th>الفريق المختار</th>
-                        <th>وقت التسجيل</th>
-                        <th>تعديل</th>
-                    </tr>
-                </thead>
-                <tbody id="selectionsTableBody">
-                    <tr>
-                        <td colspan="4" style="text-align: center;">جاري تحميل البيانات...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- قسم التذكير -->
-        <div class="instructions reminder">
-            <h2><i class="fas fa-info-circle"></i> توجيهات مهمة</h2>
-            <div class="reminder-content">
-                <div class="reminder-item">
-                    <i class="fas fa-save"></i>
-                    <h3>احفظ فريقك</h3>
-                    <p>يرجى حفظ وتذكر الفريق الذي اخترته لأن النظام لا يسمح بالتغيير لاحقاً</p>
-                </div>
-                
-                <div class="reminder-item">
-                    <i class="fas fa-users"></i>
-                    <h3>تمييز الأسماء</h3>
-                    <p>يمكنك إضافة رقم الهاتف بجانب الاسم للتمييز بين المشاركين</p>
-                </div>
-                
-                <div class="reminder-item">
-                    <i class="fas fa-camera"></i>
-                    <h3>نسخة احتياطية</h3>
-                    <p>يمكنك تصوير الشاشة كنسخة احتياطية من اختيارك</p>
-                </div>
+        <div class="input-section">
+            <div class="form-group">
+                <label for="names">أدخل الأسماء (افصل بينهم بفاصلة):</label>
+                <textarea id="names" rows="4" placeholder="أحمد, محمد, فاطمة, سارة..."></textarea>
             </div>
             
-            <div class="contact-info">
-                <p>للاستفسارات: <strong>راجع المسؤول</strong></p>
+            <div class="form-group">
+                <label for="teamCount">عدد الفرق المطلوبة:</label>
+                <select id="teamCount">
+                    <option value="2">2 فريق</option>
+                    <option value="3">3 فرق</option>
+                    <option value="4">4 فرق</option>
+                    <option value="5">5 فرق</option>
+                </select>
             </div>
+            
+            <button id="generateBtn" onclick="generateTeams()">إنشاء الفرق</button>
+        </div>
+        
+        <div class="teams-container" id="teamsContainer">
+            <!-- سيتم إضافة الفرق هنا dynamically -->
+            <div class="team-card">
+                <h3>الفريق 1</h3>
+                <ul class="member-list">
+                    <li>عضو 1</li>
+                    <li>عضو 2</li>
+                    <li>عضو 3</li>
+                </ul>
+            </div>
+            
+            <div class="team-card">
+                <h3>الفريق 2</h3>
+                <ul class="member-list">
+                    <li>عضو 4</li>
+                    <li>عضو 5</li>
+                    <li>عضو 6</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn-secondary" onclick="resetTeams()">مسح الكل</button>
+            <button onclick="saveTeams()">حفظ الفرق</button>
         </div>
     </div>
-
-    <!-- نافذة التعديل -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
-            <h2><i class="fas fa-edit"></i> تعديل الاسم</h2>
-            
-            <div class="input-group">
-                <label for="editName">الاسم الكامل (مع رقم الهاتف إذا needed)</label>
-                <input type="text" id="editName" placeholder="مثال: محمد أحمد - 0512345678">
-                <div class="phone-note">أضف رقم الهاتف بجانب الاسم للتمييز بين الأسماء المتشابهة</div>
-            </div>
-            
-            <div class="modal-actions">
-                <button onclick="updateParticipant()" class="btn">
-                    <i class="fas fa-save"></i> حفظ التعديلات
-                </button>
-                <button onclick="closeEditModal()" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> إلغاء
-                </button>
-            </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 Team Picker - جميع الحقوق محفوظة</p>
         </div>
-    </div>
+    </footer>
 
     <script>
-        // تكوين Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyC9RbJ8dH6CvpyYtgosXFKI5gJzkUJmrGs",
-            authDomain: "team-picker-869aa.firebaseapp.com",
-            projectId: "team-picker-869aa",
-            storageBucket: "team-picker-869aa.firebasestorage.app",
-            messagingSenderId: "635629828226",
-            appId: "1:635629828226:web:8798646b64fa899f33dc9b",
-            measurementId: "G-NMY4PSD41Z"
-        };
-
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        
-        // بيانات الفرق - 32 فريقاً
-        const teams = [
-            "REAL MADRID", "ATLETICO MADRID", "FC BARCELONA", "VILLARREAL", "SEVILLA",
-            "MAN UTD", "LIVERPOOL", "MANCITY", "TOTTENHAM", "NEWCASTLE UNITED",
-            "ARSENAL", "CHELSEA", "AC MILAN", "INTER MILAN", "ROMA",
-            "JUVENTUS", "NAPOLI", "BAYERN MUNCHEN", "LEVERKUSEN", "DORTMUND",
-            "PSG", "MARSEILLE", "MONACO", "AL NASR", "AL HILAL",
-            "SPORTING LISBON", "BENFICA", "AJAX", "PSV", "FLAMENGO",
-            "RIVER PLATE", "NOTTINGHAM FOREST"
-        ];
-        
-        // عناصر DOM
-        const participantNameInput = document.getElementById('participantName');
-        const saveButton = document.getElementById('saveSelection');
-        const teamsContainer = document.getElementById('teamsContainer');
-        const selectionsTableBody = document.getElementById('selectionsTableBody');
-        const remainingCount = document.getElementById('remainingCount');
-        const selectedCount = document.getElementById('selectedCount');
-        
-        // تهيئة البيانات
-        let selections = [];
-        let selectedTeam = null;
-        let editingParticipant = null;
-        
-        // تحميل البيانات من Firebase
-        function loadSelections() {
-            db.collection("selections").orderBy("timestamp", "desc")
-                .onSnapshot((snapshot) => {
-                    selections = [];
-                    snapshot.forEach((doc) => {
-                        selections.push({ id: doc.id, ...doc.data() });
-                    });
-                    renderTeams();
-                    updateStats();
-                    renderSelectionsTable();
-                }, (error) => {
-                    console.error("Error loading data: ", error);
-                    selectionsTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #ef4444;">خطأ في تحميل البيانات</td></tr>';
-                });
-        }
-        
-        // عرض الفرق
-        function renderTeams() {
+        function generateTeams() {
+            const namesInput = document.getElementById('names').value;
+            const teamCount = parseInt(document.getElementById('teamCount').value);
+            
+            if (!namesInput.trim()) {
+                alert('يرجى إدخال الأسماء أولاً');
+                return;
+            }
+            
+            const names = namesInput.split(',').map(name => name.trim()).filter(name => name !== '');
+            
+            if (names.length < teamCount) {
+                alert('عدد الأسماء يجب أن يكون أكبر من أو يساوي عدد الفرق');
+                return;
+            }
+            
+            // خلط الأسماء عشوائياً
+            const shuffledNames = [...names].sort(() => Math.random() - 0.5);
+            
+            // توزيع الأسماء على الفرق
+            const teams = Array.from({length: teamCount}, () => []);
+            
+            for (let i = 0; i < shuffledNames.length; i++) {
+                teams[i % teamCount].push(shuffledNames[i]);
+            }
+            
+            // عرض الفرق
+            const teamsContainer = document.getElementById('teamsContainer');
             teamsContainer.innerHTML = '';
             
-            teams.forEach(team => {
-                const isAvailable = !selections.some(selection => selection.team === team);
-                
+            teams.forEach((team, index) => {
                 const teamCard = document.createElement('div');
-                teamCard.className = `team-card ${!isAvailable ? 'unavailable' : ''}`;
-                teamCard.innerHTML = `<h3>${team}</h3>`;
+                teamCard.className = 'team-card';
                 
-                if (isAvailable) {
-                    teamCard.addEventListener('click', () => selectTeam(team, teamCard));
-                }
+                const teamTitle = document.createElement('h3');
+                teamTitle.textContent = `الفريق ${index + 1}`;
+                
+                const memberList = document.createElement('ul');
+                memberList.className = 'member-list';
+                
+                team.forEach(member => {
+                    const memberItem = document.createElement('li');
+                    memberItem.textContent = member;
+                    memberList.appendChild(memberItem);
+                });
+                
+                teamCard.appendChild(teamTitle);
+                teamCard.appendChild(memberList);
                 
                 teamsContainer.appendChild(teamCard);
             });
         }
         
-        // اختيار فريق
-        function selectTeam(team, card) {
-            document.querySelectorAll('.team-card').forEach(card => {
-                card.classList.remove('selected');
-            });
+        function resetTeams() {
+            document.getElementById('names').value = '';
+            document.getElementById('teamCount').value = '2';
             
-            selectedTeam = team;
-            card.classList.add('selected');
-            toggleSaveButton();
+            const teamsContainer = document.getElementById('teamsContainer');
+            teamsContainer.innerHTML = `
+                <div class="team-card">
+                    <h3>الفريق 1</h3>
+                    <ul class="member-list">
+                        <li>عضو 1</li>
+                        <li>عضو 2</li>
+                        <li>عضو 3</li>
+                    </ul>
+                </div>
+                
+                <div class="team-card">
+                    <h3>الفريق 2</h3>
+                    <ul class="member-list">
+                        <li>عضو 4</li>
+                        <li>عضو 5</li>
+                        <li>عضو 6</li>
+                    </ul>
+                </div>
+            `;
         }
         
-        // تفعيل/تعطيل زر الحفظ
-        function toggleSaveButton() {
-            const nameValid = participantNameInput.value.trim().length > 0;
-            saveButton.disabled = !(nameValid && selectedTeam);
+        function saveTeams() {
+            alert('تم حفظ الفرق بنجاح!');
         }
-        
-        // حفظ الاختيار
-        function saveSelection() {
-            const name = participantNameInput.value.trim();
-            
-            if (!name || !selectedTeam) {
-                alert('يرجى إدخال الاسم واختيار فريق!');
-                return;
-            }
-            
-            // التحقق إذا كان الفريق محجوزاً
-            if (selections.some(selection => selection.team === selectedTeam)) {
-                alert('هذا الفريق محجوز مسبقاً، يرجى اختيار فريق آخر!');
-                return;
-            }
-            
-            // إضافة الاختيار إلى Firebase
-            const newSelection = {
-                name: name,
-                team: selectedTeam,
-                timestamp: new Date().toISOString(),
-                status: 'مؤكد'
-            };
-            
-            db.collection("selections").add(newSelection)
-                .then(() => {
-                    alert(`تم حفظ اختيارك بنجاح! فريقك: ${selectedTeam}\n\nيرجى حفظ وتذكر فريقك`);
-                    participantNameInput.value = '';
-                    selectedTeam = null;
-                    document.querySelectorAll('.team-card').forEach(card => {
-                        card.classList.remove('selected');
-                    });
-                    toggleSaveButton();
-                })
-                .catch((error) => {
-                    alert("حدث خطأ أثناء الحفظ: " + error.message);
-                });
-        }
-        
-        // تحديث الإحصائيات
-        function updateStats() {
-            remainingCount.textContent = 32 - selections.length;
-            selectedCount.textContent = selections.length;
-        }
-        
-        // عرض جدول الاختيارات
-        function renderSelectionsTable() {
-            selectionsTableBody.innerHTML = '';
-            
-            if (selections.length === 0) {
-                selectionsTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="4" style="text-align: center;">لا توجد اختيارات حتى الآن</td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            selections.forEach(selection => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${selection.name}</td>
-                    <td>${selection.team}</td>
-                    <td>${new Date(selection.timestamp).toLocaleString('ar-SA')}</td>
-                    <td>
-                        <button class="edit-btn" onclick="openEditModal('${selection.id}', '${selection.name.replace(/'/g, "\\'")}', '${selection.team}')">
-                            <i class="fas fa-edit"></i> تعديل
-                        </button>
-                    </td>
-                `;
-                selectionsTableBody.appendChild(row);
-            });
-        }
-        
-        // فتح نافذة التعديل
-        function openEditModal(id, currentName, team) {
-            editingParticipant = { id, name: currentName, team };
-            document.getElementById('editName').value = currentName;
-            document.getElementById('editModal').style.display = 'flex';
-        }
-        
-        // إغلاق نافذة التعديل
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-            editingParticipant = null;
-        }
-        
-        // تحديث بيانات المشارك
-        function updateParticipant() {
-            const newName = document.getElementById('editName').value.trim();
-            
-            if (!newName) {
-                alert('يرجى إدخال الاسم!');
-                return;
-            }
-            
-            if (!editingParticipant) return;
-            
-            // تحديث البيانات في Firebase
-            db.collection("selections").doc(editingParticipant.id).update({
-                name: newName,
-                lastUpdated: new Date().toISOString()
-            })
-            .then(() => {
-                alert("تم تحديث الاسم بنجاح!");
-                closeEditModal();
-                loadSelections();
-            })
-            .catch((error) => {
-                alert("حدث خطأ أثناء التحديث: " + error.message);
-            });
-        }
-        
-        // إغلاق النافذة عند النقر خارجها
-        window.onclick = function(event) {
-            const modal = document.getElementById('editModal');
-            if (event.target == modal) {
-                closeEditModal();
-            }
-        }
-        
-        // تهيئة الصفحة عند التحميل
-        document.addEventListener('DOMContentLoaded', () => {
-            participantNameInput.addEventListener('input', toggleSaveButton);
-            saveButton.addEventListener('click', saveSelection);
-            loadSelections();
-        });
     </script>
 </body>
 </html>
